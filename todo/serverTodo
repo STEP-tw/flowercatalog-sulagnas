@@ -1,0 +1,12 @@
+-- GET '/' or '/index.html' -> index.html
+-- GET '/abeliophyllum' -> abeliophyllum.html
+-- GET '/agerantum' -> agerantum.html
+* GET '/guestBook' -> loginPage.html
+* GET '/loginPage' -> loginPage.html
+* POST '/loginPage' -> index.html generate cookie (if user)
+* POST '/loginPage' -> loginPage with 'login failed' messege (if not user)
+* GET '/logoutPage' -> index.html
+
+$ if loggedIn
+  * GET '/guestBook' -> guestBook.html
+  * POST '/guestBook' -> guestBook.html (redirect)

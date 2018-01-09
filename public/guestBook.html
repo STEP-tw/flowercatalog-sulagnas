@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+<head>
+  <link rel="stylesheet" href="./css/styleSheet.css">
+  <script src="js/comments.js"></script>
+  <script src="js/commentRender.js"></script>
+</head>
+
+<body>
+<p id="heading">
+  <a href="index.html"> << </a>
+  GuestBook
+</p>
+<h1>Leave a Comment</h1>
+<form action="addComment" method="post">
+  <label for="name" class="label">name: </label>
+  <input type="text" name="name" id="name" required><br>
+  <label for="comment" class="label">comment: </label>
+  <textarea type="text" name="comment" rows="4" cols="40" id="comment" required></textarea><br>
+  <input type="submit" value="submit" id="submit">
+</form>
+<a href='/logoutPage'><button type="button">logout</button></a>
+<hr>
+<pre>
+
+</pre>
+<h1>Date-Name-Comment</h1>
+<table id="table" cellpadding='10'>
+  <tr>
+    <th>Date</th>
+    <th>Name</th>
+    <th>Comment</th>
+  </tr>
+</table>
+
+</body>
+</html>

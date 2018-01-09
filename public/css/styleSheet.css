@@ -1,0 +1,85 @@
+body{
+  margin-left: 60px;
+  margin-right: 60px;
+  margin-top: 80px;
+}
+
+#heading{
+  text-align: center;
+  color: orange;
+  font-size: 20px;
+}
+
+#freshorigins{
+  float: left;
+  height: 450px;
+  width: 600px;
+  border: 1px;
+}
+
+#links{
+  position: absolute;
+  top: 350px;
+  left: 700px;
+}
+
+#waterJug{
+  position: absolute;
+  top: 450px;
+  left: 750px;
+  height: 50px;
+  width: 50px;
+}
+
+#guestBookLink{
+  position: absolute;
+  top: 530px;
+  left: 730px;
+}
+
+
+.label{
+  font-size: 20px;
+}
+
+#name{
+  font-size: 15px;
+  height: 30px;
+  width: 250px;
+}
+
+#comment{
+  font-size: 15px;
+}
+
+#submit{
+  font-size: 15px;
+  height: 30px;
+  width: 100px;
+  background-color: #F2EDED;
+}
+
+table,td{
+  font-size: 20px;
+  border: 1px solid black;
+  height: auto;
+  width: auto;
+}
+
+
+#flower{
+  font-size: 20px;
+  font-weight: bold;
+  color: orange;
+  text-align: center;
+}
+
+#flowerImage{
+  height: 400px;
+  width: 500px;
+  float: left;
+}
+
+#information{
+  font-style: normal;
+}
