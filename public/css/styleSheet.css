@@ -83,3 +83,9 @@ table,td{
 #information{
   font-style: normal;
 }
+
+#logout{
+  font-size: 15px;
+  height: 30px;
+  width: 100px;
+}

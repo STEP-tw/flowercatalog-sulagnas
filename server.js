@@ -2,6 +2,8 @@ let fs = require('fs');
 const timeStamp = require('./time.js').timeStamp;
 const http = require('http');
 const WebApp = require('./webapp');
+const storeNewComment=require('./lib/dataStore.js').storeNewComment;
+
 let registered_users = [{userName:'bhanutv',name:'Bhanu Teja Verma'},{userName:'harshab',name:'Harsha Vardhana'}];
 
 const logRequest=function (req) {
@@ -13,6 +15,8 @@ const loadUser = (req,res)=>{
   let user = registered_users.find(u=>u.sessionid==sessionid);
   if(sessionid && user){
     req.user = user;
+    console.log('\nuser is ==> ',req.user);
+    console.log('========================');
   }
 };
 
@@ -32,7 +36,7 @@ const getContentType=function (fileName) {
 };
 
 const getPath=function (req) {
-  if(req.url=='/'||req.url=='/index.html'){
+  if(req.url=='/'||req.url=='/index.html'||req.url=='/logoutPage'){
     return './public/index.html';
   }
   return req.url.replace('/','./public/');
@@ -47,7 +51,6 @@ const getUserWithSessionId=function (res,user) {
   let sessionid = new Date().getTime();
   res.setHeader('Set-Cookie',`sessionid=${sessionid}`);
   user.sessionid = sessionid;
-  return user;
 }
 
 const redirectToGuestBook=function (res) {
@@ -82,18 +85,23 @@ const getContentOfFile=function (req,res) {
     serveFile(req,res);
 };
 
+const redirectToIndexPage=function (res) {
+  res.redirect('/index.html');
+};
+
 let app = WebApp.create();
+
 app.use(logRequest);
 app.use(loadUser);
 app.use(getContentOfFile);
 
 app.post('/addComment',(req,res)=>{
-  let user = registered_users.includes('sessionid');
+  let user = req.user;
   if(!user) {
     redirectToLoginPage(res);
     return;
   }
-  storeTheComment(res);
+  storeNewComment(req.body);
   redirectToGuestBook(res)
 });
 
