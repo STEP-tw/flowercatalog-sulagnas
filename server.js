@@ -4,10 +4,18 @@ const http = require('http');
 const WebApp = require('./webapp');
 const storeNewComment=require('./lib/dataStore.js').storeNewComment;
 
-let registered_users = [{userName:'bhanutv',name:'Bhanu Teja Verma'},{userName:'harshab',name:'Harsha Vardhana'}];
+let registered_users = [{userName:'sulagna',name:'Sulagna Das'}];
 
-const logRequest=function (req) {
-  console.log(req.method,'==>',req.url);
+let toS = o=>JSON.stringify(o,null,2);
+const logRequest = (req,res)=>{
+  let text = ['------------------------------',
+    `${timeStamp()}`,
+    `${req.method} ${req.url}`,
+    `HEADERS=> ${toS(req.headers)}`,
+    `COOKIES=> ${toS(req.cookies)}`,
+    `BODY=> ${toS(req.body)}`,''].join('\n');
+  fs.appendFile('./requests/request.log',text,()=>{});
+  console.log(`${req.method} ${req.url}`);
 };
 
 const loadUser = (req,res)=>{
