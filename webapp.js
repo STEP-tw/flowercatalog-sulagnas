@@ -24,7 +24,7 @@ const parseCookies = text=> {
   }
 };
 
-const handleIfFileNotExist=function (res,path) {
+const handleIfFileNotExist=function (res) {
   res.statusCode=404;
   res.write('file not found');
   res.end();

@@ -15,8 +15,6 @@ const loadUser = (req,res)=>{
   let user = registered_users.find(u=>u.sessionid==sessionid);
   if(sessionid && user){
     req.user = user;
-    console.log('\nuser is ==> ',req.user);
-    console.log('========================');
   }
 };
 
@@ -36,7 +34,7 @@ const getContentType=function (fileName) {
 };
 
 const getPath=function (req) {
-  if(req.url=='/'||req.url=='/index.html'||req.url=='/logoutPage'){
+  if(req.url=='/'||req.url=='/index.html'){
     return './public/index.html';
   }
   return req.url.replace('/','./public/');
@@ -45,13 +43,13 @@ const getPath=function (req) {
 const redirectToLoginPage=function (res) {
   res.setHeader('Set-Cookie',`loginFailed=true`);
   res.redirect('/loginPage.html');
-}
+};
 
 const getUserWithSessionId=function (res,user) {
   let sessionid = new Date().getTime();
   res.setHeader('Set-Cookie',`sessionid=${sessionid}`);
   user.sessionid = sessionid;
-}
+};
 
 const redirectToGuestBook=function (res) {
   res.redirect('/guestBook.html');
@@ -74,15 +72,19 @@ const writeContentOfFile=function (res,path,content) {
   res.end();
 };
 
-const serveFile=function (req,res) {
-  let path=getPath(req);
+const serveFile=function (req,res,path) {
   let content=fs.readFileSync(path)
   writeContentOfFile(res,path,content);
 };
 
+const doesFileExists=function (path) {
+  return fs.existsSync(path);
+};
+
 const getContentOfFile=function (req,res) {
-  if(req.method=='GET')
-    serveFile(req,res);
+  let path=getPath(req);
+  if(req.method=='GET' && doesFileExists(path))
+    serveFile(req,res,path);
 };
 
 const redirectToIndexPage=function (res) {
@@ -90,6 +92,11 @@ const redirectToIndexPage=function (res) {
 };
 
 let app = WebApp.create();
+app.get('/logoutPage',(req,res)=>{
+  res.setHeader('Set-Cookie',[`loginFailed=false, Expires=${new Date(1).toUTCString()}`,`sessionid=0, Expires=${new Date(1).toUTCString()}`]);
+  delete req.user.sessionid;
+  redirectToIndexPage(res);
+})
 
 app.use(logRequest);
 app.use(loadUser);
@@ -102,7 +109,7 @@ app.post('/addComment',(req,res)=>{
     return;
   }
   storeNewComment(req.body);
-  redirectToGuestBook(res)
+  redirectToGuestBook(res);
 });
 
 app.post('/loginPage.html',(req,res)=>{
