@@ -17,6 +17,18 @@ const logRequest = (req,res)=>{
   fs.appendFile('./requests/request.log',text,()=>{});
   console.log(`${req.method} ${req.url}`);
 };
+//
+// const redirectToCommentFormPage=function (res) {
+//   res.redirect('/commentForm.html');
+// }
+//
+// const redirectNotLoggedInUserToLoginPage = (req,res)=>{
+//   if(req.url=='/guestBook' && !req.user)
+//   redirectToCommentFormPage(res);
+//   else if (req.url=='/guestBook' && req.user) {
+//     redirectToGuestBook(res);
+//   }
+// };
 
 const loadUser = (req,res)=>{
   let sessionid = req.cookies.sessionid;
@@ -48,6 +60,11 @@ const getPath=function (req) {
   return req.url.replace('/','./public/');
 };
 
+const redirectToGuestBook=function (res) {
+  res.redirect('/guestBook.html');
+};
+
+
 const redirectToLoginPage=function (res) {
   res.setHeader('Set-Cookie',`loginFailed=true`);
   res.redirect('/loginPage.html');
@@ -57,10 +74,6 @@ const getUserWithSessionId=function (res,user) {
   let sessionid = new Date().getTime();
   res.setHeader('Set-Cookie',`sessionid=${sessionid}`);
   user.sessionid = sessionid;
-};
-
-const redirectToGuestBook=function (res) {
-  res.redirect('/guestBook.html');
 };
 
 const redirectToRequiredPage=function (req,res) {
@@ -81,7 +94,12 @@ const writeContentOfFile=function (res,path,content) {
 };
 
 const serveFile=function (req,res,path) {
-  let content=fs.readFileSync(path)
+  console.log(path);
+  if(path=='./public/guestBook.html'){
+    if(!req.user)
+      path='./public/guestBookWithoutLogin.html'
+  }
+  let content=fs.readFileSync(path);
   writeContentOfFile(res,path,content);
 };
 
@@ -104,10 +122,11 @@ app.get('/logoutPage',(req,res)=>{
   res.setHeader('Set-Cookie',[`loginFailed=false, Expires=${new Date(1).toUTCString()}`,`sessionid=0, Expires=${new Date(1).toUTCString()}`]);
   delete req.user.sessionid;
   redirectToIndexPage(res);
-})
+});
 
 app.use(logRequest);
 app.use(loadUser);
+//app.use(redirectNotLoggedInUserToLoginPage);
 app.use(getContentOfFile);
 
 app.post('/addComment',(req,res)=>{

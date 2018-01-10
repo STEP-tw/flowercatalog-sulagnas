@@ -9,6 +9,7 @@ const accumulate = (o,kv)=> {
 };
 
 const parseBody = text=> text && text.split('&').map(toKeyValue).reduce(accumulate,{}) || {};
+
 let redirect = function(path){
   console.log(`redirecting to ${path}`);
   this.statusCode = 302;
