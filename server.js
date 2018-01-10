@@ -4,7 +4,7 @@ const http = require('http');
 const WebApp = require('./webapp');
 const storeNewComment=require('./lib/dataStore.js').storeNewComment;
 
-let registered_users = [{userName:'sulagna',name:'Sulagna Das'}];
+let registered_users = [{userName:'sulagna',name:'Sulagna'}];
 
 let toS = o=>JSON.stringify(o,null,2);
 const logRequest = (req,res)=>{
@@ -17,18 +17,6 @@ const logRequest = (req,res)=>{
   fs.appendFile('./requests/request.log',text,()=>{});
   console.log(`${req.method} ${req.url}`);
 };
-//
-// const redirectToCommentFormPage=function (res) {
-//   res.redirect('/commentForm.html');
-// }
-//
-// const redirectNotLoggedInUserToLoginPage = (req,res)=>{
-//   if(req.url=='/guestBook' && !req.user)
-//   redirectToCommentFormPage(res);
-//   else if (req.url=='/guestBook' && req.user) {
-//     redirectToGuestBook(res);
-//   }
-// };
 
 const loadUser = (req,res)=>{
   let sessionid = req.cookies.sessionid;
@@ -64,7 +52,6 @@ const redirectToGuestBook=function (res) {
   res.redirect('/guestBook.html');
 };
 
-
 const redirectToLoginPage=function (res) {
   res.setHeader('Set-Cookie',`loginFailed=true`);
   res.redirect('/loginPage.html');
@@ -78,7 +65,6 @@ const getUserWithSessionId=function (res,user) {
 
 const redirectToRequiredPage=function (req,res) {
   let user = registered_users.find(u=>u.userName==req.body.userName);
-  console.log(req.body,req.method);
   if(!user) {
     redirectToLoginPage(res);
     return;
@@ -87,20 +73,21 @@ const redirectToRequiredPage=function (req,res) {
   redirectToGuestBook(res);
 };
 
-const writeContentOfFile=function (res,path,content) {
+const writeContentOfFile=function (req,res,path,content) {
   res.setHeader('Content-Type',getContentType(path));
+  if(path=='./public/guestBook.html')
+    res.write(`hello ${req.user.name}`);
   res.write(content);
   res.end();
 };
 
 const serveFile=function (req,res,path) {
-  console.log(path);
   if(path=='./public/guestBook.html'){
     if(!req.user)
-      path='./public/guestBookWithoutLogin.html'
+      path='./public/guestBookWithoutLogin.html';
   }
   let content=fs.readFileSync(path);
-  writeContentOfFile(res,path,content);
+  writeContentOfFile(req,res,path,content);
 };
 
 const doesFileExists=function (path) {
@@ -118,6 +105,7 @@ const redirectToIndexPage=function (res) {
 };
 
 let app = WebApp.create();
+
 app.get('/logoutPage',(req,res)=>{
   res.setHeader('Set-Cookie',[`loginFailed=false, Expires=${new Date(1).toUTCString()}`,`sessionid=0, Expires=${new Date(1).toUTCString()}`]);
   delete req.user.sessionid;
@@ -126,16 +114,11 @@ app.get('/logoutPage',(req,res)=>{
 
 app.use(logRequest);
 app.use(loadUser);
-//app.use(redirectNotLoggedInUserToLoginPage);
 app.use(getContentOfFile);
 
 app.post('/addComment',(req,res)=>{
   let user = req.user;
-  if(!user) {
-    redirectToLoginPage(res);
-    return;
-  }
-  storeNewComment(req.body);
+  storeNewComment(req.body,user.name);
   redirectToGuestBook(res);
 });
 
